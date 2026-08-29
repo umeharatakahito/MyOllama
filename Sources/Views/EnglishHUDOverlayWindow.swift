@@ -10,6 +10,9 @@ public final class EnglishHUDOverlayController: ObservableObject {
     @Published public var isVisible: Bool = false
 
     private var hudWindow: NSPanel?
+    private var globalClickMonitor: Any?
+    private var localClickMonitor: Any?
+    private var escKeyMonitor: Any?
 
     private init() {}
 
@@ -38,6 +41,7 @@ public final class EnglishHUDOverlayController: ObservableObject {
             panel.hasShadow = true
             panel.isMovableByWindowBackground = true
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+            panel.hidesOnDeactivate = false
 
             let rootView = EnglishHUDPopupView(controller: self) {
                 self.hideHUD()
@@ -55,6 +59,9 @@ public final class EnglishHUDOverlayController: ObservableObject {
             panel.setFrameOrigin(NSPoint(x: x, y: y))
             panel.orderFrontRegardless()
             self.isVisible = true
+
+            // 外部クリック検知 & ESCキー監視を開始（どこをクリックしても簡単に消えるようにする）
+            startDismissMonitors()
         }
     }
 
@@ -62,6 +69,60 @@ public final class EnglishHUDOverlayController: ObservableObject {
         hudWindow?.orderOut(nil)
         self.isVisible = false
         EnglishLearningService.shared.stopSpeaking()
+        stopDismissMonitors()
+    }
+
+    // MARK: - 🖱️ ポップアップ外クリック & ESCキーで即座に閉じる監視
+    private func startDismissMonitors() {
+        stopDismissMonitors()
+
+        // 1. 他アプリ前面時のクリック検知（グローバル）
+        globalClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            Task { @MainActor [weak self] in
+                guard let self = self, let panel = self.hudWindow, self.isVisible else { return }
+                let clickLoc = NSEvent.mouseLocation
+                // HUDの枠外をクリックされたら即座に消去
+                if !NSMouseInRect(clickLoc, panel.frame, false) {
+                    self.hideHUD()
+                }
+            }
+        }
+
+        // 2. 自アプリ前面時のクリック検知（ローカル）
+        localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            Task { @MainActor [weak self] in
+                guard let self = self, let panel = self.hudWindow, self.isVisible else { return }
+                let clickLoc = NSEvent.mouseLocation
+                if !NSMouseInRect(clickLoc, panel.frame, false) {
+                    self.hideHUD()
+                }
+            }
+            return event
+        }
+
+        // 3. ESCキーでの即時キャンセル監視
+        escKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.keyCode == 53 { // ESC key
+                Task { @MainActor [weak self] in
+                    self?.hideHUD()
+                }
+            }
+        }
+    }
+
+    private func stopDismissMonitors() {
+        if let monitor = globalClickMonitor {
+            NSEvent.removeMonitor(monitor)
+            globalClickMonitor = nil
+        }
+        if let monitor = localClickMonitor {
+            NSEvent.removeMonitor(monitor)
+            localClickMonitor = nil
+        }
+        if let monitor = escKeyMonitor {
+            NSEvent.removeMonitor(monitor)
+            escKeyMonitor = nil
+        }
     }
 }
 
@@ -144,6 +205,7 @@ public struct EnglishHUDPopupView: View {
                         .foregroundColor(.secondary)
                 }
                 .buttonStyle(.plain)
+                .help("閉じる (ESC / 枠外クリックでも消えます)")
             }
 
             // 2. Selected English Text & Phonetic

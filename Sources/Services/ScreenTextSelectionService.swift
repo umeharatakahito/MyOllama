@@ -190,7 +190,7 @@ public final class ScreenTextSelectionService: ObservableObject {
             backing: .buffered,
             defer: false
         )
-        window.level = .floating
+        window.level = .screenSaver
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.isOpaque = false
         window.backgroundColor = NSColor.black.withAlphaComponent(0.2)
@@ -210,8 +210,7 @@ public final class ScreenTextSelectionService: ObservableObject {
         }
 
         window.contentView = NSHostingView(rootView: snipView)
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        window.orderFrontRegardless()
         self.snipWindow = window
     }
 
