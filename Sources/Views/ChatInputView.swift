@@ -325,286 +325,308 @@ public struct ChatInputView: View {
                 )
             }
 
-            // Quick Control Bar (Hero Voice Button, Mode Selector, TTS Speed, RAG, Web, Images, Thinking, Context Gauge)
-            HStack(spacing: 8) {
-                // 🌟 BIG HERO: リアルタイム音声対話ワンクリック起動/停止ボタン
-                Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        viewModel.toggleRealtimeVoiceCall()
-                    }
-                }) {
-                    HStack(spacing: 6) {
-                        ZStack {
-                            Circle()
-                                .fill(speechRecognizer.isAlwaysListening ? Color.red : Color.green)
-                                .frame(width: 18, height: 18)
-                            Image(systemName: speechRecognizer.isAlwaysListening ? "waveform" : "mic.fill")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-
-                        Text(speechRecognizer.isAlwaysListening ? "通話中 (停止)" : "🎙️ リアルタイム通話")
-                            .font(.system(size: 12, weight: .bold))
-
-                        if speechRecognizer.isAlwaysListening {
-                            Text("●")
-                                .font(.system(size: 10))
-                                .foregroundColor(.red)
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        speechRecognizer.isAlwaysListening
-                        ? LinearGradient(colors: [Color.purple.opacity(0.35), Color.red.opacity(0.25)], startPoint: .leading, endPoint: .trailing)
-                        : LinearGradient(colors: [Color.green.opacity(0.28), Color.purple.opacity(0.18)], startPoint: .leading, endPoint: .trailing)
-                    )
-                    .foregroundColor(speechRecognizer.isAlwaysListening ? .purple : .primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(speechRecognizer.isAlwaysListening ? Color.purple : Color.green.opacity(0.6), lineWidth: 1.5)
-                    )
-                    .shadow(color: speechRecognizer.isAlwaysListening ? Color.purple.opacity(0.3) : Color.green.opacity(0.2), radius: speechRecognizer.isAlwaysListening ? 6 : 2)
-                }
-                .buttonStyle(.plain)
-                .help("ワンクリックで「常時ハンズフリー認識 ＋ 3Dずんだもん召喚 ＋ 音声読み上げ」を一発起動します")
-
-                // 📝 Obsidian 新規白紙ノートを開いて壁打ち
-                Button(action: {
-                    withAnimation {
-                        viewModel.openBlankObsidianNoteAndStartCall()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "plus.rectangle.on.rectangle")
-                            .font(.system(size: 11))
-                            .foregroundColor(.cyan)
-                        Text("📝 Obsidian白紙")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.cyan)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                    .background(Color.cyan.opacity(0.15))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(Color.cyan.opacity(0.4), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .help("Obsidianアプリを起動して真っ白な新規ノートを開き、フローティングずんだもんと即座に音声壁打ちを開始します")
-
-                // Task Command Mode Selector Menu (Claude-style)
-                Menu {
-                    ForEach(TaskCommandMode.allModes) { mode in
-                        Button(action: {
-                            withAnimation {
-                                viewModel.selectedTaskMode = mode
-                                if mode.autoEnableThinking {
-                                    viewModel.enableThinking = true
-                                }
-                            }
-                        }) {
-                            HStack {
-                                Label("\(mode.name) (\(mode.slashCommand))", systemImage: mode.icon)
-                                if viewModel.selectedTaskMode.id == mode.id {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: viewModel.selectedTaskMode.icon)
-                            .font(.system(size: 11))
-                        Text(viewModel.selectedTaskMode.id == "normal" ? "モード" : viewModel.selectedTaskMode.name)
-                            .font(.system(size: 11, weight: .semibold))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(viewModel.selectedTaskMode.id != "normal" ? Color.indigo.opacity(0.25) : Color.primary.opacity(0.06))
-                    .foregroundColor(viewModel.selectedTaskMode.id != "normal" ? .indigo : .primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .stroke(viewModel.selectedTaskMode.id != "normal" ? Color.indigo.opacity(0.6) : Color.clear, lineWidth: 1)
-                    )
-                }
-                .menuStyle(.borderlessButton)
-                .fixedSize()
-                .help("ブレスト、企画書作成、論文立案、コードレビューなど、Claudeのように特化モードを選択")
-
-                // Zundamon TTS & Speed Selector
-                HStack(spacing: 2) {
+            // Action Buttons Bar (Horizontal Scrollable with Single Line Protection)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    // 🌟 BIG HERO: リアルタイム音声対話ワンクリック起動/停止ボタン
                     Button(action: {
-                        withAnimation {
-                            viewModel.isVoicevoxEnabled.toggle()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            viewModel.toggleRealtimeVoiceCall()
                         }
                     }) {
-                        HStack(spacing: 3) {
-                            Image(systemName: viewModel.isVoicevoxEnabled ? "speaker.wave.2.fill" : "speaker.slash")
-                                .font(.system(size: 11))
-                            Text("ずんだもん: \(viewModel.isVoicevoxEnabled ? "ON" : "OFF")")
-                                .font(.system(size: 11, weight: .medium))
+                        HStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(speechRecognizer.isAlwaysListening ? Color.red : Color.green)
+                                    .frame(width: 18, height: 18)
+                                Image(systemName: speechRecognizer.isAlwaysListening ? "waveform" : "mic.fill")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+
+                            Text(speechRecognizer.isAlwaysListening ? "通話中 (停止)" : "🎙️ リアルタイム通話")
+                                .font(.system(size: 12, weight: .bold))
+                                .lineLimit(1)
+
+                            if speechRecognizer.isAlwaysListening {
+                                Text("●")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.red)
+                                    .lineLimit(1)
+                            }
                         }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 4)
-                        .background(viewModel.isVoicevoxEnabled ? Color.green.opacity(0.2) : Color.primary.opacity(0.06))
-                        .foregroundColor(viewModel.isVoicevoxEnabled ? Color.green : .secondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            speechRecognizer.isAlwaysListening
+                            ? LinearGradient(colors: [Color.purple.opacity(0.35), Color.red.opacity(0.25)], startPoint: .leading, endPoint: .trailing)
+                            : LinearGradient(colors: [Color.green.opacity(0.28), Color.purple.opacity(0.18)], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .foregroundColor(speechRecognizer.isAlwaysListening ? .purple : .primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(speechRecognizer.isAlwaysListening ? Color.purple : Color.green.opacity(0.6), lineWidth: 1.5)
+                        )
+                        .shadow(color: speechRecognizer.isAlwaysListening ? Color.purple.opacity(0.3) : Color.green.opacity(0.2), radius: speechRecognizer.isAlwaysListening ? 6 : 2)
                     }
                     .buttonStyle(.plain)
-                    .help("VOICEVOXによるずんだもんリアルタイム音声読み上げをON/OFFします")
+                    .fixedSize()
+                    .help("ワンクリックで「常時ハンズフリー認識 ＋ 3Dずんだもん召喚 ＋ 音声読み上げ」を一発起動します")
 
-                    if viewModel.isVoicevoxEnabled {
-                        Menu {
-                            ForEach([0.8, 1.0, 1.15, 1.3, 1.5, 1.7, 2.0], id: \.self) { speed in
-                                Button("\(String(format: "%.2fx", speed))\(speed == 1.15 ? " (おすすめ)" : "")") {
-                                    viewModel.voiceSpeedScale = speed
+                    // 📝 Obsidian 新規白紙ノートを開いて壁打ち
+                    Button(action: {
+                        withAnimation {
+                            viewModel.openBlankObsidianNoteAndStartCall()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus.rectangle.on.rectangle")
+                                .font(.system(size: 11))
+                                .foregroundColor(.cyan)
+                            Text("📝 Obsidian白紙")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.cyan)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .background(Color.cyan.opacity(0.15))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(Color.cyan.opacity(0.4), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("Obsidianアプリを起動して真っ白な新規ノートを開き、フローティングずんだもんと即座に音声壁打ちを開始します")
+
+                    // Task Command Mode Selector Menu (Claude-style)
+                    Menu {
+                        ForEach(TaskCommandMode.allModes) { mode in
+                            Button(action: {
+                                withAnimation {
+                                    viewModel.selectedTaskMode = mode
+                                    if mode.autoEnableThinking {
+                                        viewModel.enableThinking = true
+                                    }
+                                }
+                            }) {
+                                HStack {
+                                    Label("\(mode.name) (\(mode.slashCommand))", systemImage: mode.icon)
+                                    if viewModel.selectedTaskMode.id == mode.id {
+                                        Image(systemName: "checkmark")
+                                    }
                                 }
                             }
-                        } label: {
-                            Text("\(String(format: "%.2fx", viewModel.voiceSpeedScale))")
-                                .font(.system(size: 10, weight: .bold))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 4)
-                                .background(Color.green.opacity(0.12))
-                                .foregroundColor(.green)
-                                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                         }
-                        .menuStyle(.borderlessButton)
-                        .fixedSize()
-                        .help("ずんだもんの話速（スピード）を変更")
-                    }
-                }
-
-                // Web Search Toggle Button
-                Button(action: {
-                    withAnimation {
-                        viewModel.isWebSearchEnabled.toggle()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: viewModel.isWebSearchEnabled ? "globe.asia.australia.fill" : "globe")
-                            .font(.system(size: 11))
-                        Text("Web: \(viewModel.isWebSearchEnabled ? "ON" : "OFF")")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(viewModel.isWebSearchEnabled ? Color.blue.opacity(0.18) : Color.primary.opacity(0.06))
-                    .foregroundColor(viewModel.isWebSearchEnabled ? Color.blue : .secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .help("天気予報や最新情報のWeb検索を自動実行して回答に活用します")
-
-                // RAG Toggle Button
-                Button(action: {
-                    withAnimation {
-                        viewModel.isRAGEnabled.toggle()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: viewModel.isRAGEnabled ? "book.pages.fill" : "book.closed")
-                            .font(.system(size: 11))
-                        Text("RAG: \(viewModel.isRAGEnabled ? "ON" : "OFF")")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(viewModel.isRAGEnabled ? Color.cyan.opacity(0.2) : Color.primary.opacity(0.06))
-                    .foregroundColor(viewModel.isRAGEnabled ? Color.cyan : .secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .help("Open Notebook (Obsidian) の知識ベースを自動検索して回答に活用します")
-
-                // Attach Image Button
-                Button(action: openImagePicker) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 11))
-                        Text("画像")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(Color.primary.opacity(0.06))
-                    .foregroundColor(.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .help("画像ファイルを選択して添付 (Cmd+Vでスクショ貼付も可能)")
-
-                // Thinking Mode Toggle
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        viewModel.enableThinking.toggle()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: viewModel.enableThinking ? "brain.head.profile.fill" : "brain.head.profile")
-                            .font(.system(size: 11))
-                        Text("思考: \(viewModel.enableThinking ? "ON" : "OFF")")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(viewModel.enableThinking ? Color.purple.opacity(0.18) : Color.primary.opacity(0.06))
-                    .foregroundColor(viewModel.enableThinking ? .purple : .secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .help("Ollama APIに think フラグを送信します")
-
-                // English Text Selection (OCR / Direct Highlight) Button
-                Button(action: {
-                    ScreenTextSelectionService.shared.triggerEnglishAssistant()
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "character.cursor.ibeam")
-                            .font(.system(size: 11))
-                        Text("🔤 英語解説")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 4)
-                    .background(Color.cyan.opacity(0.18))
-                    .foregroundColor(.cyan)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .help("画面上の英文をマウスで選択して即座に発音・直訳・文法解説（Cmd+Shift+E）")
-
-                Spacer()
-
-                // Context Inspector & Visual Usage Gauge
-                if let onInspect = onInspectContext {
-                    Button(action: onInspect) {
+                    } label: {
                         HStack(spacing: 4) {
-                            Image(systemName: "gauge.with.needle.fill")
-                                .font(.system(size: 10))
-                                .foregroundColor(viewModel.contextUsagePercent > 80 ? .orange : .blue)
-                            Text("\(String(format: "%.0f", viewModel.contextUsagePercent))%")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .foregroundColor(viewModel.contextUsagePercent > 80 ? .orange : .primary)
-                            Text("コンテキスト")
+                            Image(systemName: viewModel.selectedTaskMode.icon)
                                 .font(.system(size: 11))
-                                .foregroundColor(.secondary)
+                            Text(viewModel.selectedTaskMode.id == "normal" ? "モード" : viewModel.selectedTaskMode.name)
+                                .font(.system(size: 11, weight: .semibold))
+                                .lineLimit(1)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, 7)
                         .padding(.vertical, 4)
-                        .background(Color.primary.opacity(0.05))
+                        .background(viewModel.selectedTaskMode.id != "normal" ? Color.indigo.opacity(0.25) : Color.primary.opacity(0.06))
+                        .foregroundColor(viewModel.selectedTaskMode.id != "normal" ? .indigo : .primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(viewModel.selectedTaskMode.id != "normal" ? Color.indigo.opacity(0.6) : Color.clear, lineWidth: 1)
+                        )
+                    }
+                    .menuStyle(.borderlessButton)
+                    .fixedSize()
+                    .help("ブレスト、企画書作成、論文立案、コードレビューなど、Claudeのように特化モードを選択")
+
+                    // Zundamon TTS & Speed Selector
+                    HStack(spacing: 2) {
+                        Button(action: {
+                            withAnimation {
+                                viewModel.isVoicevoxEnabled.toggle()
+                            }
+                        }) {
+                            HStack(spacing: 3) {
+                                Image(systemName: viewModel.isVoicevoxEnabled ? "speaker.wave.2.fill" : "speaker.slash")
+                                    .font(.system(size: 11))
+                                Text("ずんだもん: \(viewModel.isVoicevoxEnabled ? "ON" : "OFF")")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(viewModel.isVoicevoxEnabled ? Color.green.opacity(0.2) : Color.primary.opacity(0.06))
+                            .foregroundColor(viewModel.isVoicevoxEnabled ? Color.green : .secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .fixedSize()
+                        .help("VOICEVOXによるずんだもんリアルタイム音声読み上げをON/OFFします")
+
+                        if viewModel.isVoicevoxEnabled {
+                            Menu {
+                                ForEach([0.8, 1.0, 1.15, 1.3, 1.5, 1.7, 2.0], id: \.self) { speed in
+                                    Button("\(String(format: "%.2fx", speed))\(speed == 1.15 ? " (おすすめ)" : "")") {
+                                        viewModel.voiceSpeedScale = speed
+                                    }
+                                }
+                            } label: {
+                                Text("\(String(format: "%.2fx", viewModel.voiceSpeedScale))")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 4)
+                                    .background(Color.green.opacity(0.12))
+                                    .foregroundColor(.green)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                            }
+                            .menuStyle(.borderlessButton)
+                            .fixedSize()
+                            .help("ずんだもんの話速（スピード）を変更")
+                        }
+                    }
+                    .fixedSize()
+
+                    // Web Search Toggle Button
+                    Button(action: {
+                        withAnimation {
+                            viewModel.isWebSearchEnabled.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: viewModel.isWebSearchEnabled ? "globe.asia.australia.fill" : "globe")
+                                .font(.system(size: 11))
+                            Text("Web: \(viewModel.isWebSearchEnabled ? "ON" : "OFF")")
+                                .font(.system(size: 11, weight: .medium))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(viewModel.isWebSearchEnabled ? Color.blue.opacity(0.18) : Color.primary.opacity(0.06))
+                        .foregroundColor(viewModel.isWebSearchEnabled ? Color.blue : .secondary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     }
                     .buttonStyle(.plain)
-                    .help("コンテキスト使用率: \(String(format: "%.1f", viewModel.contextUsagePercent))% (約 \(viewModel.estimatedCurrentTokens) / \(viewModel.maxContextWindowTokens) tokens)")
+                    .fixedSize()
+                    .help("天気予報や最新情報のWeb検索を自動実行して回答に活用します")
+
+                    // RAG Toggle Button
+                    Button(action: {
+                        withAnimation {
+                            viewModel.isRAGEnabled.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: viewModel.isRAGEnabled ? "book.pages.fill" : "book.closed")
+                                .font(.system(size: 11))
+                            Text("RAG: \(viewModel.isRAGEnabled ? "ON" : "OFF")")
+                                .font(.system(size: 11, weight: .medium))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(viewModel.isRAGEnabled ? Color.cyan.opacity(0.2) : Color.primary.opacity(0.06))
+                        .foregroundColor(viewModel.isRAGEnabled ? Color.cyan : .secondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("Open Notebook (Obsidian) の知識ベースを自動検索して回答に活用します")
+
+                    // Attach Image Button
+                    Button(action: openImagePicker) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.system(size: 11))
+                            Text("画像")
+                                .font(.system(size: 11, weight: .medium))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(Color.primary.opacity(0.06))
+                        .foregroundColor(.secondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("画像ファイルを選択して添付 (Cmd+Vでスクショ貼付も可能)")
+
+                    // Thinking Mode Toggle
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            viewModel.enableThinking.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: viewModel.enableThinking ? "brain.head.profile.fill" : "brain.head.profile")
+                                .font(.system(size: 11))
+                            Text("思考: \(viewModel.enableThinking ? "ON" : "OFF")")
+                                .font(.system(size: 11, weight: .medium))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(viewModel.enableThinking ? Color.purple.opacity(0.18) : Color.primary.opacity(0.06))
+                        .foregroundColor(viewModel.enableThinking ? .purple : .secondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("Ollama APIに think フラグを送信します")
+
+                    // English Text Selection (OCR / Direct Highlight) Button
+                    Button(action: {
+                        ScreenTextSelectionService.shared.triggerEnglishAssistant()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.cursor.ibeam")
+                                .font(.system(size: 11))
+                            Text("🔤 英語解説")
+                                .font(.system(size: 11, weight: .medium))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(Color.cyan.opacity(0.18))
+                        .foregroundColor(.cyan)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("画面上の英文をマウスで選択して即座に発音・直訳・文法解説（Cmd+Shift+E）")
+
+                    // Context Inspector & Visual Usage Gauge
+                    if let onInspect = onInspectContext {
+                        Button(action: onInspect) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "gauge.with.needle.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(viewModel.contextUsagePercent > 80 ? .orange : .blue)
+                                Text("\(String(format: "%.0f", viewModel.contextUsagePercent))%")
+                                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                    .foregroundColor(viewModel.contextUsagePercent > 80 ? .orange : .primary)
+                                    .lineLimit(1)
+                                Text("コンテキスト")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(Color.primary.opacity(0.05))
+                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .fixedSize()
+                        .help("コンテキスト使用率: \(String(format: "%.1f", viewModel.contextUsagePercent))% (約 \(viewModel.estimatedCurrentTokens) / \(viewModel.maxContextWindowTokens) tokens)")
+                    }
                 }
+                .padding(.horizontal, 2)
             }
-            .padding(.horizontal, 2)
 
             // Slash Command Inline Suggestions (Claude-style)
             if viewModel.inputText.hasPrefix("/") && !viewModel.inputText.contains(" ") {

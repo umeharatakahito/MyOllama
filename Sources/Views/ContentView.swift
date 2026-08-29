@@ -252,265 +252,289 @@ public struct ContentView: View {
             .fixedSize()
             .help("クリックしてペルソナ（役割）を変更")
 
-            Spacer()
+            Spacer(minLength: 8)
 
-            // Toolbar Action Buttons
-            HStack(spacing: 8) {
-                // Open Notebook / RAG Button
-                Button(action: {
-                    showOpenNotebook = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "book.pages.fill")
-                            .foregroundColor(.cyan)
-                        Text("RAG / ノート")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.cyan.opacity(0.12))
-                    .foregroundColor(.primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("Open Notebook (ume-lunch) のRAGナレッジとObsidianノート一覧を閲覧・検索")
-
-                // Context Inspector Button
-                Button(action: {
-                    showContextInspector = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "doc.text.magnifyingglass")
-                        Text("コンテキスト")
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.primary.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("LLMに渡される直前のコンテキスト（システムプロンプト・メモリ・履歴）を確認")
-
-                // Memory Manager Button
-                Button(action: {
-                    showMemoryManager = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "brain.head.profile.fill")
-                            .foregroundColor(.purple)
-                        Text("メモリー")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.purple.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("あなたの性格・好み・重要事項・会話の長期記憶を管理・抽出")
-
-                // Voice Commands Cheat Sheet Button
-                Button(action: {
-                    showVoiceHelp = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "mic.badge.waveform")
-                            .foregroundColor(.purple)
-                        Text("音声コマンド")
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.purple.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("音声コマンド・自動送信トリガーの一覧を確認")
-
-                // Agent Task Manager Button
-                Button(action: {
-                    initialWorkspaceTab = .tasks
-                    showAgentWorkspace = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "checklist")
-                            .foregroundColor(.indigo)
-                        Text("タスク")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.indigo.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("エージェントのTODOタスク一覧と実行状況を確認")
-
-                // Agent Graph & Metrics Button
-                Button(action: {
-                    initialWorkspaceTab = .graph
-                    showAgentWorkspace = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "point.3.connected.trianglepath.dotted")
-                            .foregroundColor(.pink)
-                        Text("グラフ")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.pink.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("タスクフロー依存関係DAGグラフと進行度・ツール稼働統計チャートを表示")
-
-                // English Vocabulary List Button
-                Button(action: {
-                    showVocabularyList = true
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "character.book.closed.fill")
-                            .foregroundColor(.cyan)
-                        Text("単語帳")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.cyan.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("英語学習単語帳（発音・習得チェック・Obsidian保存）を表示")
-
-                // Obsidian Wall-Hitting Sync Button
-                Button(action: {
-                    withAnimation {
-                        if ObsidianSyncService.shared.isSyncingWithObsidian {
-                            ObsidianSyncService.shared.clearSync()
-                        } else {
-                            _ = ObsidianSyncService.shared.syncLatestObsidianNote()
+            // Toolbar Action Buttons (Horizontal Scrollable with Single Line Protection)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    // Open Notebook / RAG Button
+                    Button(action: {
+                        showOpenNotebook = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "book.pages.fill")
+                                .foregroundColor(.cyan)
+                            Text("RAG / ノート")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
                         }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.cyan.opacity(0.12))
+                        .foregroundColor(.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: ObsidianSyncService.shared.isSyncingWithObsidian ? "book.pages.fill" : "book.closed")
-                            .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
-                        Text(ObsidianSyncService.shared.isSyncingWithObsidian ? "Obsidian連携中" : "Obsidian壁打ち")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(ObsidianSyncService.shared.isSyncingWithObsidian ? Color.cyan.opacity(0.18) : Color.primary.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("Obsidianで開いている最新ノートを自動読み込みし、Obsidian画面を見ながらずんだもんと壁打ち対話します")
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("Open Notebook (ume-lunch) のRAGナレッジとObsidianノート一覧を閲覧・検索")
 
-                // 3D Zundamon Mascot Toggle (Floating & In-app)
-                Button(action: {
-                    withAnimation {
-                        show3DMascot.toggle()
-                        if show3DMascot {
-                            FloatingMascotController.shared.show(viewModel: viewModel)
-                        } else {
-                            FloatingMascotController.shared.hide()
+                    // Context Inspector Button
+                    Button(action: {
+                        showContextInspector = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "doc.text.magnifyingglass")
+                            Text("コンテキスト")
+                                .font(.caption)
+                                .lineLimit(1)
                         }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.primary.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: show3DMascot ? "cube.transparent.fill" : "cube.transparent")
-                            .foregroundColor(show3DMascot ? .green : .secondary)
-                        Text("3D")
-                            .font(.caption)
-                            .foregroundColor(show3DMascot ? .green : .secondary)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(show3DMascot ? Color.green.opacity(0.18) : Color.primary.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .help("画面上に常に最前面で浮遊する3Dずんだもん（クリックでMyOllamaを表示）を切り替え")
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("LLMに渡される直前のコンテキスト（システムプロンプト・メモリ・履歴）を確認")
 
-                // Always on Top (Pin) Button
-                Button(action: {
-                    withAnimation {
-                        isAlwaysOnTop.toggle()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: isAlwaysOnTop ? "pin.fill" : "pin")
-                            .foregroundColor(isAlwaysOnTop ? .orange : .primary)
-                        Text(isAlwaysOnTop ? "最前面" : "通常")
-                            .font(.caption)
-                            .foregroundColor(isAlwaysOnTop ? .orange : .primary)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(isAlwaysOnTop ? Color.orange.opacity(0.18) : Color.primary.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(isAlwaysOnTop ? Color.orange.opacity(0.5) : Color.clear, lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .help("ウィンドウを常に手前（最前面）に固定表示します")
-
-                // Obsidian Save Button
-                Button(action: {
-                    Task {
-                        let (success, fileName) = await viewModel.saveCurrentChatToObsidian()
-                        if success, let name = fileName {
-                            viewModel.errorMessage = "✅ 会話を Obsidian の myollama フォルダに「\(name)」として保存しました！"
+                    // Memory Manager Button
+                    Button(action: {
+                        showMemoryManager = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "brain.head.profile.fill")
+                                .foregroundColor(.purple)
+                            Text("メモリー")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
                         }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.purple.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "square.and.arrow.down.fill")
-                            .foregroundColor(.cyan)
-                        Text("Obsidian保存")
-                            .font(.caption)
-                            .fontWeight(.medium)
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("あなたの性格・好み・重要事項・会話の長期記憶を管理・抽出")
+
+                    // Voice Commands Cheat Sheet Button
+                    Button(action: {
+                        showVoiceHelp = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "mic.badge.waveform")
+                                .foregroundColor(.purple)
+                            Text("音声コマンド")
+                                .font(.caption)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.purple.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.cyan.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-                .disabled(viewModel.messages.isEmpty)
-                .help("現在の会話ログをまとめ付きで Obsidian の myollama フォルダに .md ファイルとして保存")
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("音声コマンド・自動送信トリガーの一覧を確認")
 
-                Button(action: {
-                    Task { await viewModel.loadModels() }
-                }) {
-                    Image(systemName: "arrow.clockwise")
-                }
-                .buttonStyle(.borderless)
-                .help("モデル一覧を再読み込み")
+                    // Agent Task Manager Button
+                    Button(action: {
+                        initialWorkspaceTab = .tasks
+                        showAgentWorkspace = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checklist")
+                                .foregroundColor(.indigo)
+                            Text("タスク")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.indigo.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("エージェントのTODOタスク一覧と実行状況を確認")
 
-                Button(action: { showSettings.toggle() }) {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .buttonStyle(.borderless)
-                .help("設定 (プロンプト・ロール・メモリ・音声・RAG)")
+                    // Agent Graph & Metrics Button
+                    Button(action: {
+                        initialWorkspaceTab = .graph
+                        showAgentWorkspace = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "point.3.connected.trianglepath.dotted")
+                                .foregroundColor(.pink)
+                            Text("グラフ")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.pink.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("タスクフロー依存関係DAGグラフと進行度・ツール稼働統計チャートを表示")
 
-                Button(action: { viewModel.clearChat() }) {
-                    Image(systemName: "trash")
+                    // English Vocabulary List Button
+                    Button(action: {
+                        showVocabularyList = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.book.closed.fill")
+                                .foregroundColor(.cyan)
+                            Text("単語帳")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.cyan.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("英語学習単語帳（発音・習得チェック・Obsidian保存）を表示")
+
+                    // Obsidian Wall-Hitting Sync Button
+                    Button(action: {
+                        withAnimation {
+                            if ObsidianSyncService.shared.isSyncingWithObsidian {
+                                ObsidianSyncService.shared.clearSync()
+                            } else {
+                                _ = ObsidianSyncService.shared.syncLatestObsidianNote()
+                            }
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: ObsidianSyncService.shared.isSyncingWithObsidian ? "book.pages.fill" : "book.closed")
+                                .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
+                            Text(ObsidianSyncService.shared.isSyncingWithObsidian ? "Obsidian連携中" : "Obsidian壁打ち")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(ObsidianSyncService.shared.isSyncingWithObsidian ? Color.cyan.opacity(0.18) : Color.primary.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("Obsidianで開いている最新ノートを自動読み込みし、Obsidian画面を見ながらずんだもんと壁打ち対話します")
+
+                    // 3D Zundamon Mascot Toggle (Floating & In-app)
+                    Button(action: {
+                        withAnimation {
+                            show3DMascot.toggle()
+                            if show3DMascot {
+                                FloatingMascotController.shared.show(viewModel: viewModel)
+                            } else {
+                                FloatingMascotController.shared.hide()
+                            }
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: show3DMascot ? "cube.transparent.fill" : "cube.transparent")
+                                .foregroundColor(show3DMascot ? .green : .secondary)
+                            Text("3D")
+                                .font(.caption)
+                                .foregroundColor(show3DMascot ? .green : .secondary)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(show3DMascot ? Color.green.opacity(0.18) : Color.primary.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("画面上に常に最前面で浮遊する3Dずんだもん（クリックでMyOllamaを表示）を切り替え")
+
+                    // Always on Top (Pin) Button
+                    Button(action: {
+                        withAnimation {
+                            isAlwaysOnTop.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: isAlwaysOnTop ? "pin.fill" : "pin")
+                                .foregroundColor(isAlwaysOnTop ? .orange : .primary)
+                            Text(isAlwaysOnTop ? "最前面" : "通常")
+                                .font(.caption)
+                                .foregroundColor(isAlwaysOnTop ? .orange : .primary)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(isAlwaysOnTop ? Color.orange.opacity(0.18) : Color.primary.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(isAlwaysOnTop ? Color.orange.opacity(0.5) : Color.clear, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .help("ウィンドウを常に手前（最前面）に固定表示します")
+
+                    // Obsidian Save Button
+                    Button(action: {
+                        Task {
+                            let (success, fileName) = await viewModel.saveCurrentChatToObsidian()
+                            if success, let name = fileName {
+                                viewModel.errorMessage = "✅ 会話を Obsidian の myollama フォルダに「\(name)」として保存しました！"
+                            }
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "square.and.arrow.down.fill")
+                                .foregroundColor(.cyan)
+                            Text("Obsidian保存")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.cyan.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .fixedSize()
+                    .disabled(viewModel.messages.isEmpty)
+                    .help("現在の会話ログをまとめ付きで Obsidian の myollama フォルダに .md ファイルとして保存")
+
+                    Button(action: {
+                        Task { await viewModel.loadModels() }
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("モデル一覧を再読み込み")
+
+                    Button(action: { showSettings.toggle() }) {
+                        Image(systemName: "slider.horizontal.3")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("設定 (プロンプト・ロール・メモリ・音声・RAG)")
+
+                    Button(action: { viewModel.clearChat() }) {
+                        Image(systemName: "trash")
+                    }
+                    .buttonStyle(.borderless)
+                    .disabled(viewModel.messages.isEmpty)
+                    .help("チャットをクリア")
                 }
-                .buttonStyle(.borderless)
-                .disabled(viewModel.messages.isEmpty)
-                .help("チャットをクリア")
             }
         }
         .padding(.horizontal, 16)
