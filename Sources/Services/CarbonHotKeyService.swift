@@ -37,12 +37,14 @@ public final class CarbonHotKeyService {
             if status == noErr {
                 if hotKeyID.id == 1 {
                     // Cmd + Shift + E: 選択テキスト翻訳（無ければスニップ）
+                    print("🎯 [HotKey] Cmd + Shift + E triggered")
                     Task { @MainActor in
                         ScreenTextSelectionService.shared.triggerEnglishAssistant()
                     }
                     return noErr
                 } else if hotKeyID.id == 2 {
                     // Cmd + Shift + S: 画面範囲選択スニッピング OCR 直接起動
+                    print("🎯 [HotKey] Cmd + Shift + S triggered")
                     Task { @MainActor in
                         ScreenTextSelectionService.shared.startScreenSnip()
                     }
@@ -52,7 +54,7 @@ public final class CarbonHotKeyService {
             return OSStatus(eventNotHandledErr)
         }
 
-        let status = InstallEventHandler(
+        let installStatus = InstallEventHandler(
             GetApplicationEventTarget(),
             handler,
             1,
@@ -61,14 +63,17 @@ public final class CarbonHotKeyService {
             &eventHandler
         )
 
-        guard status == noErr else { return }
+        guard installStatus == noErr else {
+            print("❌ [HotKey] InstallEventHandler failed: \(installStatus)")
+            return
+        }
 
         let signature = OSType(0x4D594F4C) // 'MYOL'
         let modifiers = UInt32(cmdKey | shiftKey)
 
-        // 2. Cmd + Shift + E (kVK_ANSI_E = 14) の登録
+        // 2. Cmd + Shift + E (kVK_ANSI_E = 0x0E = 14) の登録
         let hotKeyIDE = EventHotKeyID(signature: signature, id: 1)
-        RegisterEventHotKey(
+        let statusE = RegisterEventHotKey(
             UInt32(kVK_ANSI_E),
             modifiers,
             hotKeyIDE,
@@ -76,10 +81,11 @@ public final class CarbonHotKeyService {
             0,
             &hotKeyRefE
         )
+        print("⌨️ [HotKey] RegisterEventHotKey (Cmd+Shift+E): status=\(statusE)")
 
-        // 3. Cmd + Shift + S (kVK_ANSI_S = 1) の登録
+        // 3. Cmd + Shift + S (kVK_ANSI_S = 0x01 = 1) の登録
         let hotKeyIDS = EventHotKeyID(signature: signature, id: 2)
-        RegisterEventHotKey(
+        let statusS = RegisterEventHotKey(
             UInt32(kVK_ANSI_S),
             modifiers,
             hotKeyIDS,
@@ -87,5 +93,6 @@ public final class CarbonHotKeyService {
             0,
             &hotKeyRefS
         )
+        print("⌨️ [HotKey] RegisterEventHotKey (Cmd+Shift+S): status=\(statusS)")
     }
 }

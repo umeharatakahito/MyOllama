@@ -177,7 +177,9 @@ public final class ScreenTextSelectionService: ObservableObject {
         guard !isSnapping else { return }
         isSnapping = true
 
-        guard let screen = NSScreen.main else {
+        // カーソルがあるスクリーンを取得（マルチディスプレイ対応）
+        let mouseLoc = NSEvent.mouseLocation
+        guard let screen = NSScreen.screens.first(where: { NSMouseInRect(mouseLoc, $0.frame, false) }) ?? NSScreen.main ?? NSScreen.screens.first else {
             isSnapping = false
             return
         }
@@ -188,7 +190,8 @@ public final class ScreenTextSelectionService: ObservableObject {
             backing: .buffered,
             defer: false
         )
-        window.level = .screenSaver
+        window.level = .floating
+        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.isOpaque = false
         window.backgroundColor = NSColor.black.withAlphaComponent(0.2)
         window.hasShadow = false

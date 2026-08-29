@@ -6,10 +6,12 @@ PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 
 cd "$PROJECT_ROOT"
 
-if [ ! -d "${PROJECT_ROOT}/MyOllama.app" ]; then
-    echo "⚠️ MyOllama.app not found. Building now..."
-    "$SCRIPT_DIR/build_app.sh"
-fi
+echo "🔨 Building latest MyOllama.app..."
+"$SCRIPT_DIR/build_app.sh"
 
-echo "🚀 Launching MyOllama.app from ${PROJECT_ROOT}..."
+echo "🔄 Closing any running MyOllama instances..."
+pkill -x MyOllama || true
+sleep 0.5
+
+echo "🚀 Launching latest MyOllama.app from ${PROJECT_ROOT}..."
 open "${PROJECT_ROOT}/MyOllama.app"
