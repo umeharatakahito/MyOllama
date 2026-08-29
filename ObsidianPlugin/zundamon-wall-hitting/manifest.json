@@ -1,0 +1,9 @@
+{
+  "id": "zundamon-wall-hitting",
+  "name": "ずんだもん壁打ち (Zundamon Wall-Hitting)",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Obsidianの画面を見ながら、フローティングずんだもんとリアルタイムに音声壁打ち・アイデア出しができるプラグインです。",
+  "author": "MyOllama",
+  "isDesktopOnly": true
+}

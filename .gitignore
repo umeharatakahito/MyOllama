@@ -1,0 +1,24 @@
+# Xcode
+.DS_Store
+*/.DS_Store
+*.xcworkspace
+*.xcodeproj
+xcuserdata/
+DerivedData/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.pins
+
+# App Bundles & Binaries
+*.app/
+build/
+bin/
+
+# Temporary / OS files
+*.swp
+*~
+.Spotlight-V100
+.Trashes

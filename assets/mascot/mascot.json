@@ -1,0 +1,61 @@
+{
+  "height": 1.1346101668896154,
+  "parts": [
+    {
+      "file": "parts/Body_baked.obj",
+      "role": "body",
+      "min_y": -2.5067080855478707e-07,
+      "max_y": 0.7559810876846313,
+      "faces": 6592
+    },
+    {
+      "file": "parts/Cloth_baked.obj",
+      "role": "body",
+      "min_y": 0.26590025424957275,
+      "max_y": 0.7829091548919678,
+      "faces": 5984
+    },
+    {
+      "file": "parts/Hair_baked.obj",
+      "role": "hair",
+      "min_y": 0.7772380113601685,
+      "max_y": 1.088144063949585,
+      "faces": 4502
+    },
+    {
+      "file": "parts/Hair_baked_1.obj",
+      "role": "hair",
+      "min_y": 0.46375203132629395,
+      "max_y": 0.7876054048538208,
+      "faces": 1728
+    },
+    {
+      "file": "parts/Head_baked.obj",
+      "role": "head",
+      "min_y": 0.7205600738525391,
+      "max_y": 1.0688326358795166,
+      "faces": 8532
+    },
+    {
+      "file": "parts/Head_baked_1.obj",
+      "role": "head",
+      "min_y": 0.8675162196159363,
+      "max_y": 0.9285506010055542,
+      "faces": 2688
+    },
+    {
+      "file": "parts/Head_baked_2.obj",
+      "role": "head",
+      "min_y": 0.8072625398635864,
+      "max_y": 1.1336100101470947,
+      "faces": 2228
+    },
+    {
+      "file": "parts/Shoes_baked.obj",
+      "role": "ground",
+      "min_y": -0.0010001567425206304,
+      "max_y": 0.13234935700893402,
+      "faces": 2496
+    }
+  ]
+}
