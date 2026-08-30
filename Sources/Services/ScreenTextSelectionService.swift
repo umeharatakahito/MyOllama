@@ -33,7 +33,7 @@ public final class ScreenTextSelectionService: ObservableObject {
                         let trimmed = copied.trimmingCharacters(in: .whitespacesAndNewlines)
                         // 英字が含まれており、2〜800文字の英文/単語であれば自動ポップアップ
                         if trimmed.count >= 2 && trimmed.count <= 800 && self.containsEnglishWords(trimmed) {
-                            EnglishHUDOverlayController.shared.showHUD(text: trimmed)
+                            EnglishHUDOverlayController.shared.showHUD(text: trimmed, source: "コピー検知")
                         }
                     }
                 }
@@ -98,7 +98,7 @@ public final class ScreenTextSelectionService: ObservableObject {
                         // クリップボードから即座に取得して表示
                         try? await Task.sleep(nanoseconds: 50_000_000)
                         if let text = NSPasteboard.general.string(forType: .string), !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            EnglishHUDOverlayController.shared.showHUD(text: text.trimmingCharacters(in: .whitespacesAndNewlines))
+                            EnglishHUDOverlayController.shared.showHUD(text: text.trimmingCharacters(in: .whitespacesAndNewlines), source: "ダブルCmd+C")
                         }
                     }
                 } else {
@@ -115,7 +115,7 @@ public final class ScreenTextSelectionService: ObservableObject {
             if let selectedText = await getSelectedTextFromActiveApp(), !selectedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 let trimmed = selectedText.trimmingCharacters(in: .whitespacesAndNewlines)
                 self.lastRecognizedText = trimmed
-                EnglishHUDOverlayController.shared.showHUD(text: trimmed)
+                EnglishHUDOverlayController.shared.showHUD(text: trimmed, source: "Cmd+Shift+E (選択テキスト)")
                 return
             }
 
@@ -256,7 +256,7 @@ public final class ScreenTextSelectionService: ObservableObject {
                 completion(trimmed, centerPoint)
             } else {
                 // デフォルト: オーバーレイHUD表示 & チャット解説
-                EnglishHUDOverlayController.shared.showHUD(text: trimmed, at: centerPoint)
+                EnglishHUDOverlayController.shared.showHUD(text: trimmed, at: centerPoint, source: "Cmd+Shift+S (画面スニップ)")
             }
         }
 

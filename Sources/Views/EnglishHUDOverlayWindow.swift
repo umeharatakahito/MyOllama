@@ -16,16 +16,27 @@ public final class EnglishHUDOverlayController: ObservableObject {
 
     private init() {}
 
-    public func showHUD(text: String, at point: CGPoint? = nil) {
+    public func showHUD(text: String, at point: CGPoint? = nil, source: String = "画面選択") {
         let clean = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clean.isEmpty else { return }
 
         self.currentText = clean
 
         // 1. macOS 内蔵辞書から意味を即座に高速検索（0.01秒・メモリ0MB）
-        self.currentDefinition = DictionaryLookupService.shared.lookup(text: clean)
+        let def = DictionaryLookupService.shared.lookup(text: clean)
+        self.currentDefinition = def
 
-        // 2. ネイティブ発音を即座に再生
+        // 2. 翻訳・検索履歴データベースに自動蓄積
+        let defSummary = def?.meanings.joined(separator: " / ") ?? ""
+        TranslationHistoryService.shared.recordHistory(
+            sourceText: clean,
+            definition: defSummary,
+            phonetic: def?.phonetic ?? "",
+            partOfSpeech: def?.partOfSpeech ?? "",
+            source: source
+        )
+
+        // 3. ネイティブ発音を即座に再生
         EnglishLearningService.shared.speakNativeEnglish(text: clean)
 
         if hudWindow == nil {
