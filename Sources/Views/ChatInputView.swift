@@ -327,48 +327,48 @@ public struct ChatInputView: View {
 
             // Action Buttons Bar (Horizontal Scrollable with Single Line Protection)
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     // 🌟 BIG HERO: リアルタイム音声対話ワンクリック起動/停止ボタン
                     Button(action: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             viewModel.toggleRealtimeVoiceCall()
                         }
                     }) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 5) {
                             ZStack {
                                 Circle()
                                     .fill(speechRecognizer.isAlwaysListening ? Color.red : Color.green)
-                                    .frame(width: 18, height: 18)
+                                    .frame(width: 14, height: 14)
                                 Image(systemName: speechRecognizer.isAlwaysListening ? "waveform" : "mic.fill")
-                                    .font(.system(size: 10, weight: .bold))
+                                    .font(.system(size: 8, weight: .bold))
                                     .foregroundColor(.white)
                             }
 
                             Text(speechRecognizer.isAlwaysListening ? "通話中 (停止)" : "🎙️ リアルタイム通話")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.system(size: 11, weight: .bold))
                                 .lineLimit(1)
 
                             if speechRecognizer.isAlwaysListening {
                                 Text("●")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 8))
                                     .foregroundColor(.red)
                                     .lineLimit(1)
                             }
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(
                             speechRecognizer.isAlwaysListening
                             ? LinearGradient(colors: [Color.purple.opacity(0.35), Color.red.opacity(0.25)], startPoint: .leading, endPoint: .trailing)
                             : LinearGradient(colors: [Color.green.opacity(0.28), Color.purple.opacity(0.18)], startPoint: .leading, endPoint: .trailing)
                         )
                         .foregroundColor(speechRecognizer.isAlwaysListening ? .purple : .primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
                                 .stroke(speechRecognizer.isAlwaysListening ? Color.purple : Color.green.opacity(0.6), lineWidth: 1.5)
                         )
-                        .shadow(color: speechRecognizer.isAlwaysListening ? Color.purple.opacity(0.3) : Color.green.opacity(0.2), radius: speechRecognizer.isAlwaysListening ? 6 : 2)
                     }
                     .buttonStyle(.plain)
                     .fixedSize()
@@ -389,12 +389,13 @@ public struct ChatInputView: View {
                                 .foregroundColor(.cyan)
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(Color.cyan.opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
                                 .stroke(Color.cyan.opacity(0.4), lineWidth: 1)
                         )
                     }
@@ -430,7 +431,8 @@ public struct ChatInputView: View {
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(viewModel.selectedTaskMode.id != "normal" ? Color.indigo.opacity(0.25) : Color.primary.opacity(0.06))
                         .foregroundColor(viewModel.selectedTaskMode.id != "normal" ? .indigo : .primary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -458,7 +460,8 @@ public struct ChatInputView: View {
                                     .lineLimit(1)
                             }
                             .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 3)
+                            .frame(height: 26)
                             .background(viewModel.isVoicevoxEnabled ? Color.green.opacity(0.2) : Color.primary.opacity(0.06))
                             .foregroundColor(viewModel.isVoicevoxEnabled ? Color.green : .secondary)
                             .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -478,7 +481,8 @@ public struct ChatInputView: View {
                                 Text("\(String(format: "%.2fx", viewModel.voiceSpeedScale))")
                                     .font(.system(size: 10, weight: .bold))
                                     .padding(.horizontal, 5)
-                                    .padding(.vertical, 4)
+                                    .padding(.vertical, 3)
+                                    .frame(height: 26)
                                     .background(Color.green.opacity(0.12))
                                     .foregroundColor(.green)
                                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
@@ -503,8 +507,9 @@ public struct ChatInputView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(viewModel.isWebSearchEnabled ? Color.blue.opacity(0.18) : Color.primary.opacity(0.06))
                         .foregroundColor(viewModel.isWebSearchEnabled ? Color.blue : .secondary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -526,8 +531,9 @@ public struct ChatInputView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(viewModel.isRAGEnabled ? Color.cyan.opacity(0.2) : Color.primary.opacity(0.06))
                         .foregroundColor(viewModel.isRAGEnabled ? Color.cyan : .secondary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -545,8 +551,9 @@ public struct ChatInputView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(Color.primary.opacity(0.06))
                         .foregroundColor(.secondary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -568,8 +575,9 @@ public struct ChatInputView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(viewModel.enableThinking ? Color.purple.opacity(0.18) : Color.primary.opacity(0.06))
                         .foregroundColor(viewModel.enableThinking ? .purple : .secondary)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -589,8 +597,9 @@ public struct ChatInputView: View {
                                 .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .frame(height: 26)
                         .background(Color.cyan.opacity(0.18))
                         .foregroundColor(.cyan)
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -616,7 +625,8 @@ public struct ChatInputView: View {
                                     .lineLimit(1)
                             }
                             .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 3)
+                            .frame(height: 26)
                             .background(Color.primary.opacity(0.05))
                             .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                         }
@@ -625,8 +635,10 @@ public struct ChatInputView: View {
                         .help("コンテキスト使用率: \(String(format: "%.1f", viewModel.contextUsagePercent))% (約 \(viewModel.estimatedCurrentTokens) / \(viewModel.maxContextWindowTokens) tokens)")
                     }
                 }
+                .frame(height: 28)
                 .padding(.horizontal, 2)
             }
+            .frame(height: 30)
 
             // Slash Command Inline Suggestions (Claude-style)
             if viewModel.inputText.hasPrefix("/") && !viewModel.inputText.contains(" ") {

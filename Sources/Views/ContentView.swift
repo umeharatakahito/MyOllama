@@ -254,9 +254,9 @@ public struct ContentView: View {
 
             Spacer(minLength: 8)
 
-            // Toolbar Action Buttons (Horizontal Scrollable with Single Line Protection)
+            // Toolbar Action Buttons (Locked to slim horizontal bar, never vertically stretches)
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     // Open Notebook / RAG Button
                     Button(action: {
                         showOpenNotebook = true
@@ -264,13 +264,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "book.pages.fill")
                                 .foregroundColor(.cyan)
+                                .font(.system(size: 11))
                             Text("RAG / ノート")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 7)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.cyan.opacity(0.12))
                         .foregroundColor(.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -285,12 +286,14 @@ public struct ContentView: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "doc.text.magnifyingglass")
+                                .font(.system(size: 11))
                             Text("コンテキスト")
-                                .font(.caption)
+                                .font(.system(size: 11))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.primary.opacity(0.06))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -305,13 +308,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "brain.head.profile.fill")
                                 .foregroundColor(.purple)
+                                .font(.system(size: 11))
                             Text("メモリー")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.purple.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -326,12 +330,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "mic.badge.waveform")
                                 .foregroundColor(.purple)
+                                .font(.system(size: 11))
                             Text("音声コマンド")
-                                .font(.caption)
+                                .font(.system(size: 11))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.purple.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -347,13 +353,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "checklist")
                                 .foregroundColor(.indigo)
+                                .font(.system(size: 11))
                             Text("タスク")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.indigo.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -369,13 +376,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "point.3.connected.trianglepath.dotted")
                                 .foregroundColor(.pink)
+                                .font(.system(size: 11))
                             Text("グラフ")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.pink.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -390,13 +398,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "character.book.closed.fill")
                                 .foregroundColor(.cyan)
+                                .font(.system(size: 11))
                             Text("単語帳")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.cyan.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -417,14 +426,15 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: ObsidianSyncService.shared.isSyncingWithObsidian ? "book.pages.fill" : "book.closed")
                                 .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
+                                .font(.system(size: 11))
                             Text(ObsidianSyncService.shared.isSyncingWithObsidian ? "Obsidian連携中" : "Obsidian壁打ち")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(ObsidianSyncService.shared.isSyncingWithObsidian ? .cyan : .primary)
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(ObsidianSyncService.shared.isSyncingWithObsidian ? Color.cyan.opacity(0.18) : Color.primary.opacity(0.06))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -446,13 +456,15 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: show3DMascot ? "cube.transparent.fill" : "cube.transparent")
                                 .foregroundColor(show3DMascot ? .green : .secondary)
+                                .font(.system(size: 11))
                             Text("3D")
-                                .font(.caption)
+                                .font(.system(size: 11))
                                 .foregroundColor(show3DMascot ? .green : .secondary)
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(show3DMascot ? Color.green.opacity(0.18) : Color.primary.opacity(0.06))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -469,13 +481,15 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: isAlwaysOnTop ? "pin.fill" : "pin")
                                 .foregroundColor(isAlwaysOnTop ? .orange : .primary)
+                                .font(.system(size: 11))
                             Text(isAlwaysOnTop ? "最前面" : "通常")
-                                .font(.caption)
+                                .font(.system(size: 11))
                                 .foregroundColor(isAlwaysOnTop ? .orange : .primary)
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(isAlwaysOnTop ? Color.orange.opacity(0.18) : Color.primary.opacity(0.06))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                         .overlay(
@@ -499,13 +513,14 @@ public struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "square.and.arrow.down.fill")
                                 .foregroundColor(.cyan)
+                                .font(.system(size: 11))
                             Text("Obsidian保存")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(.system(size: 11, weight: .medium))
                                 .lineLimit(1)
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 4)
+                        .frame(height: 26)
                         .background(Color.cyan.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
@@ -518,27 +533,36 @@ public struct ContentView: View {
                         Task { await viewModel.loadModels() }
                     }) {
                         Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 12))
+                            .frame(width: 26, height: 26)
                     }
                     .buttonStyle(.borderless)
                     .help("モデル一覧を再読み込み")
 
                     Button(action: { showSettings.toggle() }) {
                         Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 12))
+                            .frame(width: 26, height: 26)
                     }
                     .buttonStyle(.borderless)
                     .help("設定 (プロンプト・ロール・メモリ・音声・RAG)")
 
                     Button(action: { viewModel.clearChat() }) {
                         Image(systemName: "trash")
+                            .font(.system(size: 12))
+                            .frame(width: 26, height: 26)
                     }
                     .buttonStyle(.borderless)
                     .disabled(viewModel.messages.isEmpty)
                     .help("チャットをクリア")
                 }
+                .frame(height: 28)
             }
+            .frame(height: 30)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.vertical, 6)
+        .frame(height: 42)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
